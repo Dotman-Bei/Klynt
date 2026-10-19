@@ -77,8 +77,9 @@ function cut(src, from, to, label) {
   <div class="game-over"><h2>Game Over</h2><p>Click or spacebar to start again</p></div>
   <div class="game-ready"><div id="start-button">Start</div><div></div></div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.4/TweenMax.min.js"></script>
+<!-- Hosted locally so the game never depends on a CDN: three.js r83 (MIT), GSAP 1.20.4 -->
+<script src="./vendor/three.r83.min.js"></script>
+<script src="./vendor/TweenMax.1.20.4.min.js"></script>
 <script src="../klynt-bridge.js"></script>
 <script src="./script.js"></script>
 </body>
