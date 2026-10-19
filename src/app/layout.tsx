@@ -1,9 +1,14 @@
 import type { Metadata, Viewport } from 'next';
-import { Chivo } from 'next/font/google';
+import localFont from 'next/font/local';
 import { Providers } from './providers';
 import '@/styles/tokens.css';
 
-const chivo = Chivo({ subsets: ['latin'], weight: ['400', '700', '900'], variable: '--font-chivo', display: 'swap' });
+// Chivo (SIL Open Font License), self-hosted so builds never depend on Google Fonts being reachable.
+const chivo = localFont({
+  src: [{ path: './fonts/chivo-latin-variable.woff2', weight: '100 900', style: 'normal' }],
+  variable: '--font-chivo',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: { default: 'Klynt — browser games on BOT Chain', template: '%s · Klynt' },
