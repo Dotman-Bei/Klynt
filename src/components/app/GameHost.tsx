@@ -39,7 +39,7 @@ function PathStrip({ outcome }: { outcome: Outcome }) {
   const claim: [string, 'done' | 'todo'] = earned
     ? [`Earned ${Number(BigInt(earned.earned!) / 10n ** 14n) / 10_000} ${earned.symbol}`, 'done']
     : scored?.status === 'accepted' && scored.symbol
-      ? ['Nothing earned this run', 'todo']
+      ? ['Below the reward threshold or daily cap', 'todo']
       : ['Rewards off', 'todo'];
   const steps: [string, string, string][] = [
     ['Play', 'Run finished', 'done'],
@@ -143,6 +143,15 @@ export function GameHost({ game }: { game: Game }) {
       }
     };
     window.addEventListener('message', onMessage);
+    // A server-rendered iframe can finish loading before this effect runs, so its load event and the
+    // bridge's 'ready' message are missed. Check for that, and ask the bridge to announce itself again.
+    const markLoaded = () => setState((s) => (s.kind === 'loading' ? { kind: 'ready' } : s));
+    try {
+      if (frame.current?.contentDocument?.readyState === 'complete') markLoaded();
+    } catch {
+      // cross-origin frames are never used here
+    }
+    frame.current?.contentWindow?.postMessage({ type: 'klynt:ping' }, window.location.origin);
     return () => {
       window.clearTimeout(timer);
       window.removeEventListener('message', onMessage);

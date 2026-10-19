@@ -22,6 +22,8 @@
   window.addEventListener('message', function (e) {
     if (e.origin !== origin || !e.data) return;
     if (e.data.type === 'klynt:end-request') window.KlyntBridge.end(window.KlyntBridge.getScore());
+    // The page may mount after this script ran and missed 'ready'; it pings, we answer.
+    if (e.data.type === 'klynt:ping') post({ type: 'klynt:ready' });
   });
   post({ type: 'klynt:ready' });
 })();
