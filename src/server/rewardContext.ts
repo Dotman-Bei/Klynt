@@ -16,7 +16,7 @@ type Ready = {
 type NotReady = { ok: false; reason: string };
 
 let cached: { at: number; value: Ready | NotReady } | null = null;
-const TTL_MS = 15_000;
+const TTL_MS = 60_000;
 
 export async function rewardContext(seasonId: number): Promise<Ready | NotReady> {
   if (cached && Date.now() - cached.at < TTL_MS) return cached.value;
@@ -36,14 +36,10 @@ async function load(seasonId: number): Promise<Ready | NotReady> {
   if (!cfg) return { ok: false, reason: 'The reward vault is not configured.' };
   const client = vaultClient(cfg);
   try {
-    const season = await client.season(seasonId);
+    const [season, attestorActive, globalPaused] = await Promise.all([client.season(seasonId), client.attestorActive(), client.globalPaused()]);
     if (!season.exists) return { ok: false, reason: 'This season does not exist on the vault.' };
-    if (!(await client.attestorActive())) return { ok: false, reason: 'The score service’s signing key is not active on the vault.' };
-    const [decimals, symbol, globalPaused] = await Promise.all([
-      client.tokenDecimals(season.token),
-      client.tokenSymbol(season.token),
-      client.globalPaused(),
-    ]);
+    if (!attestorActive) return { ok: false, reason: 'The score service’s signing key is not active on the vault.' };
+    const [decimals, symbol] = await Promise.all([client.tokenDecimals(season.token), client.tokenSymbol(season.token)]);
     const expected = Number(process.env.REWARD_TOKEN_DECIMALS || 18);
     if (decimals !== expected) return { ok: false, reason: `The reward token has ${decimals} decimals; the server expects ${expected}.` };
     return { ok: true, client, policy: policyFromEnv(decimals), seasonId, season, globalPaused, symbol, decimals };
