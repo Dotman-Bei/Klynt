@@ -1,0 +1,9 @@
+node_modules/
+.next/
+out/
+.env*.local
+.env
+.taste-skill/upstream/
+.taste-skill/live/
+*.tsbuildinfo
+next-env.d.ts
