@@ -332,3 +332,12 @@ body:has(.app), body:has(.play) { background: #000; color: #fff; }
   .scope-row { flex-direction: column; align-items: stretch; }
   .select select { width: 100%; height: 44px; }
 }
+
+/* ---------- Rewards ---------- */
+.span3 > .card, .span4 > .card { height: 100%; }
+.figure--lead { font-size: 32px; font-weight: 700; }
+.unit { font-size: 16px; font-weight: 400; color: var(--muted); }
+.claim-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.notice--row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; }
+.progress { height: 8px; border-radius: 999px; background: var(--raised); overflow: hidden; margin-bottom: 4px; }
+.progress span { display: block; height: 100%; background: var(--data); border-radius: 999px; }
