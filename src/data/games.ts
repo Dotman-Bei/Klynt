@@ -17,6 +17,8 @@ export type Game = {
   /** Path of the hosted build under /public, when Klynt hosts it. */
   src?: string;
   shot?: string;
+  /** Focal point of the screenshot, for small crops (CSS object-position). */
+  focus?: string;
   /** A muted gameplay loop recorded from the game itself. */
   clip?: string;
   /** The game's own colours, used for its chapter on Home. */
@@ -69,6 +71,7 @@ export const games: Game[] = [
     availability: 'practice',
     src: '/games/tower-blocks/index.html',
     shot: '/shots/tower-blocks.png',
+    focus: '50% 78%',
     field: '#d0cbc7',
     fieldInk: '#111418',
     credit: {
@@ -138,6 +141,7 @@ export const games: Game[] = [
     availability: 'coming-soon',
     reason: 'Open source and licensed. Integration with the score bridge is the next milestone.',
     shot: '/shots/coloron.png',
+    focus: '82% 70%',
     field: '#45d6cd',
     fieldInk: '#111418',
     credit: { authors: 'greghub', licence: 'Apache-2.0', source: 'https://github.com/greghub/coloron' },
