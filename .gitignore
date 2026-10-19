@@ -13,3 +13,4 @@ next-env.d.ts
 
 # Local design-skill tooling (not part of the app)
 .claude/
+.next-*/
