@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useAuth, useMe } from '@/lib/api';
 import { formatDuration, formatScore, formatWhen, usePracticeRuns } from '@/lib/practice';
 
 /** The visitor's practice record for one game, read from this device only. */
@@ -10,6 +11,9 @@ export function YourBest({ gameId, playable, name }: { gameId: string; playable:
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const runs = mounted ? all.filter((r) => r.gameId === gameId) : [];
+  const auth = useAuth();
+  const me = useMe(auth.signedIn);
+  const ranked = me.data?.games[gameId];
   const best = runs.reduce<(typeof runs)[number] | null>((b, r) => (!b || r.score > b.score ? r : b), null);
 
   return (
@@ -24,7 +28,7 @@ export function YourBest({ gameId, playable, name }: { gameId: string; playable:
         <div><dt>Best run</dt><dd>{best ? formatWhen(best.endedAt) : '—'}</dd></div>
         <div><dt>Length</dt><dd className="num">{best ? formatDuration(best.durationMs) : '—'}</dd></div>
         <div><dt>Last run</dt><dd>{runs[0] ? formatWhen(runs[0].endedAt) : '—'}</dd></div>
-        <div><dt>Ranked best</dt><dd>—</dd></div>
+        <div><dt>Ranked best</dt><dd className="num">{ranked ? `${formatScore(ranked.best)} · rank ${ranked.rank ?? '—'}` : '—'}</dd></div>
       </dl>
       <div className="card__foot">
         {playable ? (

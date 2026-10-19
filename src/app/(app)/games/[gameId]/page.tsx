@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Thumb } from '@/components/app/GameList';
 import { IconExternal } from '@/components/app/icons';
+import { GameBoard } from '@/components/app/GameBoard';
 import { YourBest } from '@/components/app/YourBest';
 import { games, getGame, isPlayable, statusLabel } from '@/data/games';
 
@@ -130,34 +131,7 @@ export default async function GameDetails({ params }: { params: Promise<{ gameId
           <p className="card__note"><Link href="/rewards" className="text-action">See the reward rules</Link></p>
         </section>
 
-        <section className="card span6" aria-labelledby="board-title">
-          <div className="card__head">
-            <h2 id="board-title" className="card__title">{game.name} leaderboard</h2>
-            <span className="card__meta">Season 1 · not started</span>
-          </div>
-          <table className="table table--flush">
-            <thead>
-              <tr>
-                <th className="num rank-col">Rank</th>
-                <th>Player</th>
-                <th className="num">Best score</th>
-                <th className="num">Runs</th>
-                <th className="num">Last run</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colSpan={5}>
-                  <p className="empty empty--inline">
-                    {playable
-                      ? 'Ranked play opens when score checking goes live. Your practice runs are under Profile.'
-                      : `${game.name} has no leaderboard until it is playable.`}
-                  </p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </section>
+        <GameBoard gameId={game.id} name={game.name} playable={playable} />
 
         {game.credit && (
           <section className="card span6 credits" aria-labelledby="credits-title">

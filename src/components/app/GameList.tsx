@@ -88,7 +88,7 @@ export function GameList() {
                 </td>
                 <td className="col-type muted">{g.type}</td>
                 <td className="col-score muted">{g.scoring}</td>
-                <td className="col-board muted">{playable ? 'Opens with checking' : '—'}</td>
+                <td className="col-board muted">{g.availability === 'ranked' ? 'Season 1 · open' : playable ? 'Opens with checking' : '—'}</td>
                 <td className="col-rewards muted">{playable ? 'Off this season' : '—'}</td>
                 <td><span className={`pill pill--${g.availability}`}>{statusLabel[g.availability]}</span></td>
                 <td className="chev"><IconChevron /></td>

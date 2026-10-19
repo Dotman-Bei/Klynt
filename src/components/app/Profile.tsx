@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { formatUnits } from 'viem';
 import { useBalance } from 'wagmi';
 import { useWallet } from '@/components/WalletButton';
+import { live, useAuth, useMe } from '@/lib/api';
 import { games, getGame, isPlayable } from '@/data/games';
 import { botChain, shortAddress } from '@/lib/chain';
 import { bestByGame, formatDuration, formatScore, formatWhen, usePracticeRuns } from '@/lib/practice';
@@ -35,6 +36,9 @@ export function Profile() {
           ? Number(formatUnits(balance.data.value, balance.data.decimals)).toLocaleString('en-GB', { minimumFractionDigits: 4, maximumFractionDigits: 4 })
           : '—';
   const recent = runs.slice(0, showAll ? 20 : 5);
+  const auth = useAuth();
+  const me = useMe(auth.signedIn);
+  const rankedRuns = me.data?.accepted ?? 0;
 
   return (
     <>
@@ -85,7 +89,7 @@ export function Profile() {
       )}
 
       <dl className="kpis">
-        <div><dt>Ranked runs</dt><dd className="num">0</dd><p className="kpis__note">Ranking not live yet</p></div>
+        <div><dt>Ranked runs</dt><dd className="num">{rankedRuns}</dd><p className="kpis__note">{!live ? 'Ranking not live yet' : auth.signedIn ? `${me.data?.rejected ?? 0} rejected` : 'Sign in to see them'}</p></div>
         <div><dt>Practice runs</dt><dd className="num">{runs.length}</dd><p className="kpis__note">On this device</p></div>
         <div><dt>Games played</dt><dd className="num">{gamesPlayed} <span className="unit">of {playable.length}</span></dd><p className="kpis__note">Playable now</p></div>
         <div><dt>BOT balance</dt><dd className="num">{balanceText}</dd><p className="kpis__note">{connected ? 'Read from the chain' : 'No wallet connected'}</p></div>
@@ -184,19 +188,31 @@ export function Profile() {
         <section className="card" aria-labelledby="placements-title">
             <div className="card__head">
               <h2 id="placements-title" className="card__title">Placements</h2>
-              <span className="card__meta">Season 1</span>
+              {live && connected && !auth.signedIn ? (
+                <button type="button" className="text-action" onClick={auth.signIn} disabled={auth.signing}>
+                  {auth.signing ? 'Check your wallet…' : 'Sign in to rank'}
+                </button>
+              ) : (
+                <span className="card__meta">Season 1</span>
+              )}
             </div>
             <ul className="mini-list">
-              {playable.map((g) => (
-                <li key={g.id}>
-                  <div className="mini-list__text">
-                    <p className="mini-list__name">{g.name}</p>
-                    <p className="mini-list__sub">Board opens with score checking</p>
-                  </div>
-                  <p className="mini-list__value">Not ranked</p>
-                </li>
-              ))}
+              {playable.map((g) => {
+                const p = me.data?.games[g.id];
+                return (
+                  <li key={g.id}>
+                    <div className="mini-list__text">
+                      <p className="mini-list__name">{g.name}</p>
+                      <p className="mini-list__sub">
+                        {!live ? 'Board opens with score checking' : p ? `Best ${formatScore(p.best)} · ${formatWhen(new Date(p.at).toISOString())}` : 'No accepted run yet'}
+                      </p>
+                    </div>
+                    <p className={p?.rank ? 'mini-list__value num' : 'mini-list__value'}>{p?.rank ? `Rank ${p.rank}` : 'Not ranked'}</p>
+                  </li>
+                );
+              })}
             </ul>
+            {auth.error && <p className="field__error">{auth.error}</p>}
           </section>
       </div>
     </>

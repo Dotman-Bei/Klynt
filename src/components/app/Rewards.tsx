@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useWallet } from '@/components/WalletButton';
+import { useAuth, useMe } from '@/lib/api';
 import { botChain, explorerUrl, service, shortAddress } from '@/lib/chain';
 
 // Nothing on this screen is a sample. Every value comes from config or the connected wallet; while
@@ -20,6 +21,8 @@ export function ClaimCard() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
   const connected = mounted && w.isConnected && !!w.address;
+  const auth = useAuth();
+  const me = useMe(auth.signedIn);
 
   return (
     <section className="card card--stretch" aria-labelledby="claim-title">
@@ -32,7 +35,7 @@ export function ClaimCard() {
         <div><dt>Earned this season</dt><dd className="num">0 GGI</dd></div>
         <div><dt>Pending</dt><dd className="num">0 GGI</dd></div>
         <div><dt>Claimed</dt><dd className="num">0 GGI</dd></div>
-        <div><dt>Accepted runs</dt><dd className="num">0</dd></div>
+        <div><dt>Accepted runs</dt><dd className="num">{me.data?.accepted ?? 0}</dd></div>
         <div><dt>Network</dt><dd>{connected && w.wrongNetwork ? `Chain ${w.chainId}` : `${botChain.name} (${botChain.id})`}</dd></div>
       </dl>
       {connected && w.wrongNetwork && (
