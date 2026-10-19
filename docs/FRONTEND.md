@@ -94,7 +94,7 @@ Home (light chapters). Every field has an assigned ink, and every pair is at lea
 | `--accent` | `#f1c40f` | Hextris yellow block | `--ink` | 11.1 |
 | `--field-coloron` | `#45d6cd` | Coloron sky | `--ink` | 10.3 |
 | `--field-tower` | `#d0cbc7` | Tower Blocks ground | `--ink` | 11.5 |
-| `--field-red` | `#e74c3c` | Hextris red block | `--ink` | 4.8 (body text 18px+) |
+| `--field-red` | `#ff4571` | Coloron red bar | `--ink` | 5.6 |
 | `--field-slate` | `#2c3e50` | Hextris core hexagon | `--paper` | 9.6 |
 | `--field-night` | `#0b0b0b` | Radius Raid space | `--paper` | 17.2 |
 
@@ -216,7 +216,7 @@ four stages are listed in order.
 A yellow hexagon about 120vh across enters from the right, cropped by the top, right and bottom edges,
 its left point reaching column 7. Headline on columns 1–6, vertically centred.
 
-- h1: **BROWSER GAMES / ON BOT CHAIN**
+- h1: **GAMES ON / BOT CHAIN** (first draft "Browser games on BOT Chain" wrapped to three lines in Chivo Black; "browser" moved to the supporting line)
 - Supporting line (19px): "Play casual games in your browser, rank on checked leaderboards, and
   claim capped rewards on BOT Chain when a season is funded."
 - Primary: **Choose a game** → `/games`
@@ -301,8 +301,8 @@ The thresholds in the Check stage are example values for the illustration *(conf
 7. **Can I put my game on Klynt?** Yes. Submit it for review. Approved games join the catalogue;
    nothing goes live automatically.
 
-**6. Creators — "The action tile".** Centre tile in `--field-coloron`; left tile a Radius Raid
-screenshot; right tile flat `--field-slate`.
+**6. Creators — "The action tile".** On a `--field-slate` ground: centre tile in `--field-coloron`,
+flanked by a Radius Raid screenshot and a Coloron screenshot.
 - Heading (40px): **BRING YOUR GAME**
 - Text (17px): "Klynt handles the wallet, the leaderboard and the payouts. You send a playable
   browser game and confirm you own it."
@@ -339,7 +339,9 @@ blocks' bottoms share one line, like a tower.
   **Play** pill on the right (absent when the game is not playable; then the status pill and its
   reason).
 - Grid (6 columns, one 16px gutter):
-  - **How to play** (4 cols): controls, the goal, what ends a run.
+  - **How to play** (4 cols): the steps, then controls and devices. For games that are not playable,
+    this card is **Road to ranked play**: the reason, then a checklist of real states (licence
+    confirmed, hosted without trackers, score bridge, Practice, score rules published, ranked).
   - **Your best** (2 cols): best practice score on this device, with its date, or "—" and "No runs on
     this device yet".
   - **How it scores** (3 cols): the scoring rule; "Ranked by best accepted score in the season."
@@ -439,7 +441,8 @@ The game owns the screen. Sidebar and bottom bar are hidden; a 56px bar remains.
      validated as a 0x address).
   4. **Rights**: checkbox "I own or have a licence for all code, art, audio and names in this game."
      and checkbox "I understand Klynt may remove a game that breaks these rules."
-- Right column summary on desktop: **What happens next**: Pending review → Changes requested or
+- **What happens next** sits in the label column of "The game", and **Requirements** in the label
+  column of "Where it lives", so no label column is empty beside its panel:: Pending review → Changes requested or
   Approved → Added to the catalogue in Coming soon → Practice → Ranked.
 - **Requirements** (`id="requirements"`): runs in a desktop and phone browser without plugins; loads
   in under 10 seconds on 4G *(confirm)*; reports the final score through the bridge; no ads, trackers
@@ -454,6 +457,8 @@ The game owns the screen. Sidebar and bottom bar are hidden; a 56px bar remains.
 - Not allow-listed (or no wallet): h1 **Admin**, "This area is for Klynt operators. Connect an
   operator wallet." The page renders nothing else. Server-side enforcement is required (PRD §6.9);
   the frontend gate only hides.
+- Development only: `/admin?preview=operator` renders the operator view without an operator wallet,
+  for design review. Production builds ignore it.
 - Operator: tabs **Submissions** · **Games** · **Seasons** · **Score review** · **Health**.
   - Submissions: queue table (Game · Developer · Submitted · Integration · Status) with row actions
     **Approve**, **Request changes**, **Reject** (the reject confirm names the game).

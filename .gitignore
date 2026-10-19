@@ -7,3 +7,4 @@ out/
 .taste-skill/live/
 *.tsbuildinfo
 next-env.d.ts
+.next-build/

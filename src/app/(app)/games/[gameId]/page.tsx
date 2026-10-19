@@ -17,6 +17,8 @@ function road(status: string, licence?: string): [string, boolean][] {
       ['Hosted on Klynt with no ads or trackers', false],
       ['Score bridge added', false],
       ['Opens in Practice', false],
+      ['Score rules published: minimum length and score ceiling', false],
+      ['Opens for ranked play', false],
     ];
   }
   return [
@@ -24,6 +26,8 @@ function road(status: string, licence?: string): [string, boolean][] {
     ['Hosted on Klynt with no ads or trackers', false],
     ['Score bridge added', false],
     ['Opens in Practice', false],
+    ['Score rules published: minimum length and score ceiling', false],
+    ['Opens for ranked play', false],
   ];
 }
 
@@ -85,7 +89,7 @@ export default async function GameDetails({ params }: { params: Promise<{ gameId
         ) : (
           <section className="card span4" aria-labelledby="road-title">
             <div className="card__head">
-              <h2 id="road-title" className="card__title">Road to Practice</h2>
+              <h2 id="road-title" className="card__title">Road to ranked play</h2>
               <span className="card__meta">{statusLabel[game.availability]}</span>
             </div>
             <p>{game.reason}</p>
