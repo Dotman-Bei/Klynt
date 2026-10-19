@@ -10,3 +10,6 @@ next-env.d.ts
 .next-build/
 .taste-skill/
 .data/
+
+# Local design-skill tooling (not part of the app)
+.claude/
