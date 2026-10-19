@@ -303,3 +303,32 @@ body:has(.app), body:has(.play) { background: #000; color: #fff; }
   .result .play__panel-actions { width: 100%; }
   .result .play__panel-actions .btn { flex: 1; }
 }
+
+/* ---------- Scope row, rail, mini lists ---------- */
+.scope-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 24px; }
+.segmented { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--surface); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.segmented button { height: 30px; padding: 0 14px; border-radius: 999px; border: 0; background: none; color: var(--muted); cursor: pointer; white-space: nowrap; font-size: 14px; }
+.segmented button:hover { color: var(--text); }
+.segmented button[aria-selected='true'] { background: var(--raised); color: var(--text); font-weight: 700; }
+.select select { height: var(--control-h); padding: 0 34px 0 14px; border-radius: 999px; border: 1px solid var(--control); background: var(--ground); color: var(--text); appearance: none; background-image: none; cursor: pointer; }
+.select { position: relative; }
+.select::after { content: ''; position: absolute; right: 15px; top: 50%; width: 6px; height: 6px; margin-top: -5px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); pointer-events: none; }
+.with-rail { display: grid; grid-template-columns: minmax(0, 1fr) 384px; gap: var(--gap); margin-top: var(--gap); align-items: stretch; }
+.stack { display: flex; flex-direction: column; gap: var(--gap); }
+.stack > .card:last-child { flex: 1; }
+.mini-list li { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--rule); }
+.mini-list li:first-child { border-top: 0; padding-top: 0; }
+.mini-list__text { flex: 1; min-width: 0; }
+.mini-list__name { font-weight: 700; }
+.mini-list__sub { color: var(--muted); font-size: 12px; }
+.mini-list__value { min-width: 56px; text-align: right; font-variant-numeric: tabular-nums; }
+.rules { display: grid; }
+.rules li { padding: 9px 0; border-top: 1px solid var(--rule); }
+.rules li:first-child { border-top: 0; padding-top: 0; }
+@media (max-width: 1100px) {
+  .with-rail { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .scope-row { flex-direction: column; align-items: stretch; }
+  .select select { width: 100%; height: 44px; }
+}
