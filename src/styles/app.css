@@ -433,3 +433,12 @@ body:has(.app), body:has(.play) { background: #000; color: #fff; }
   .reason-cell, .admin-body .table th:nth-child(4) { display: none; }
 }
 .admin-log { margin-top: var(--gap); }
+.path li.is-bad { background: var(--pill-negative-bg); }
+.path li.is-bad .path__state { color: var(--negative); }
+.play__alert { position: absolute; top: 64px; left: 50%; transform: translateX(-50%); z-index: 5; padding: 8px 14px; border-radius: 999px; background: var(--pill-negative-bg); color: var(--pill-negative-ink); font-size: 13px; }
+.play { position: relative; }
+.table tr.is-you td { color: var(--data); font-weight: 700; }
+.you { margin-left: 8px; font-size: 12px; font-weight: 700; color: var(--data); }
+.skeleton { display: block; height: 14px; width: 60%; margin: 17px 0; border-radius: 4px; background: var(--raised); }
+.board-more { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+.table--flush tbody tr:not(:has(td[colspan])) td { height: var(--row-h); }

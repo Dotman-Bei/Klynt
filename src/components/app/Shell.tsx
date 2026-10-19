@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { getGame } from '@/data/games';
 import { addressUrl, botChain, service, shortAddress } from '@/lib/chain';
 import { useWallet } from '@/components/WalletButton';
+import { useAuth } from '@/lib/api';
 import { IconAdmin, IconCopy, IconExternal, IconGames, IconMore, IconProfile, IconRanks, IconRewards, IconSubmit } from './icons';
 
 const main = [
@@ -62,6 +63,7 @@ function Crumbs() {
 
 export function WalletSwitcher({ compact = false }: { compact?: boolean }) {
   const w = useWallet();
+  const auth = useAuth();
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -129,7 +131,18 @@ export function WalletSwitcher({ compact = false }: { compact?: boolean }) {
           <Link role="menuitem" className="menu__item" href="/profile" onClick={() => setOpen(false)}>
             <IconProfile /> Profile
           </Link>
-          <button type="button" role="menuitem" className="menu__item" onClick={() => { w.disconnect(); setOpen(false); }}>
+          {auth.live && !w.wrongNetwork && (
+            auth.signedIn ? (
+              <button type="button" role="menuitem" className="menu__item" onClick={() => { auth.signOut(); setOpen(false); }}>
+                Sign out of Klynt
+              </button>
+            ) : (
+              <button type="button" role="menuitem" className="menu__item" onClick={auth.signIn} disabled={auth.signing}>
+                {auth.signing ? 'Check your wallet…' : 'Sign in to rank'}
+              </button>
+            )
+          )}
+          <button type="button" role="menuitem" className="menu__item" onClick={() => { auth.signedIn && auth.signOut(); w.disconnect(); setOpen(false); }}>
             Disconnect
           </button>
         </div>

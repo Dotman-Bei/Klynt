@@ -28,7 +28,7 @@ export type Game = {
   keyboardOnly?: boolean;
 };
 
-export const games: Game[] = [
+const catalogue: Game[] = [
   {
     id: 'hextris',
     name: 'Hextris',
@@ -161,6 +161,12 @@ export const games: Game[] = [
     fieldInk: '#111418',
   },
 ];
+
+// With the score service connected, the games that run here are validated and ranked.
+const scoreServiceLive = !!process.env.NEXT_PUBLIC_KLYNT_API;
+export const games: Game[] = catalogue.map((g) =>
+  scoreServiceLive && g.availability === 'practice' ? { ...g, availability: 'ranked' } : g,
+);
 
 export const statusLabel: Record<Availability, string> = {
   ranked: 'Ranked',
