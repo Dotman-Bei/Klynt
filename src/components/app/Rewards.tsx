@@ -124,9 +124,12 @@ export function RewardsView() {
   const symbol = s?.symbol ?? 'GGI';
   const claimable = BigInt(mine?.claimable ?? 0);
 
+  const checking = live && rewards.isLoading;
   const why = !live
     ? 'Nothing to claim. Rewards are off.'
-    : !on
+    : checking
+      ? 'Checking the reward vault…'
+      : !on
       ? r?.reason ?? 'Rewards are off.'
       : !connected
         ? 'Connect your wallet to claim.'
@@ -158,7 +161,9 @@ export function RewardsView() {
         <div>
           <h1>Rewards</h1>
           <p className="title-row__line">
-            {on && r?.policy
+            {checking
+              ? 'Checking the reward vault…'
+              : on && r?.policy
               ? `Season 1 pays ${fmt(r.policy.perRun, d)} ${symbol} per qualifying run, up to ${fmt(r.policy.dailyCap, d)} a day.${isTestPoints(s) ? ' These are testnet points with no value.' : ''}`
               : 'Rewards are off this season. Nothing you play is owed anything until the pool is funded.'}
           </p>
@@ -205,7 +210,7 @@ export function RewardsView() {
           <section className="card card--stretch" aria-labelledby="season-title">
             <div className="card__head">
               <h2 id="season-title" className="card__title">Season 1</h2>
-              <span className={`pill${on ? ' pill--ranked' : ''}`}>{on ? 'Rewards on' : s?.paused ? 'Paused' : 'Rewards off'}</span>
+              <span className={`pill${on ? ' pill--ranked' : ''}`}>{checking ? 'Checking…' : on ? 'Rewards on' : s?.paused ? 'Paused' : 'Rewards off'}</span>
             </div>
             <dl className="kv">
               <div><dt>Pool</dt><dd className="num">{s ? `${fmt(BigInt(s.funded) - BigInt(s.claimed), d)} of ${fmt(s.budget, d)} left` : 'Not funded'}</dd></div>

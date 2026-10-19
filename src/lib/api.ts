@@ -115,3 +115,30 @@ export type RewardsStatus = {
 export function useRewards() {
   return useQuery({ queryKey: ['rewards'], queryFn: () => api<RewardsStatus>('/rewards'), enabled: live, refetchInterval: 30_000 });
 }
+
+/** The reward state in words, for every place that mentions rewards. Never claims rewards are on unless the vault says so. */
+export function useRewardSummary() {
+  const r = useRewards();
+  const d = r.data;
+  const s = d?.season;
+  const on = !!d?.available && !!s && !!d.policy;
+  const whole = (v?: string) => (v && s ? Number(BigInt(v) / 10n ** BigInt(Math.max(0, s.decimals - 4))) / 10_000 : 0);
+  const symbol = s?.symbol ?? (live && r.isLoading ? '' : 'GGI');
+  const isTest = symbol === 'KTP-TEST';
+  return {
+    on,
+    loading: live && r.isLoading,
+    symbol,
+    isTest,
+    perRun: whole(d?.policy?.perRun),
+    dailyCap: whole(d?.policy?.dailyCap),
+    minScore: d?.policy?.minScore ?? {},
+    /** One line for a game: what a run earns, or that rewards are off. */
+    forGame(gameId: string) {
+      if (live && r.isLoading) return 'Checking…';
+      const min = d?.policy?.minScore[gameId];
+      if (!on || min === undefined) return 'Off this season';
+      return `${whole(d!.policy!.perRun)} ${symbol} a run scoring ${min}+`;
+    },
+  };
+}

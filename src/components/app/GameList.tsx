@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { games, isPlayable, statusLabel, type Game } from '@/data/games';
+import { useRewardSummary } from '@/lib/api';
 import { IconChevron, IconSearch } from './icons';
 
 type Tab = 'all' | 'playable' | 'coming-soon' | 'on-hold';
@@ -28,6 +29,7 @@ const order = { ranked: 0, practice: 1, 'coming-soon': 2, 'on-hold': 3 } as cons
 
 export function GameList() {
   const router = useRouter();
+  const rewards = useRewardSummary();
   const [tab, setTab] = useState<Tab>('all');
   const [query, setQuery] = useState('');
   const q = query.trim().toLowerCase();
@@ -89,7 +91,7 @@ export function GameList() {
                 <td className="col-type muted">{g.type}</td>
                 <td className="col-score muted">{g.scoring}</td>
                 <td className="col-board muted">{g.availability === 'ranked' ? 'Season 1 · open' : playable ? 'Opens with checking' : '—'}</td>
-                <td className="col-rewards muted">{playable ? 'Off this season' : '—'}</td>
+                <td className="col-rewards muted">{playable ? rewards.forGame(g.id) : '—'}</td>
                 <td><span className={`pill pill--${g.availability}`}>{statusLabel[g.availability]}</span></td>
                 <td className="chev"><IconChevron /></td>
               </tr>

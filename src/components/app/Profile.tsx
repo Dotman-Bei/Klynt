@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { formatUnits } from 'viem';
 import { useBalance } from 'wagmi';
 import { useWallet } from '@/components/WalletButton';
-import { live, useAuth, useMe } from '@/lib/api';
+import { live, useAuth, useMe, useRewards, useRewardSummary } from '@/lib/api';
 import { games, getGame, isPlayable } from '@/data/games';
 import { botChain, shortAddress } from '@/lib/chain';
 import { bestByGame, formatDuration, formatScore, formatWhen, usePracticeRuns } from '@/lib/practice';
@@ -39,6 +39,10 @@ export function Profile() {
   const auth = useAuth();
   const me = useMe(auth.signedIn);
   const rankedRuns = me.data?.accepted ?? 0;
+  const rewards = useRewardSummary();
+  const rewardData = useRewards().data;
+  const amount = (v?: string) => (v && rewardData?.season ? Number(BigInt(v) / 10n ** BigInt(Math.max(0, rewardData.season.decimals - 4))) / 10_000 : 0);
+  const mine = rewardData?.me;
 
   return (
     <>
@@ -138,16 +142,20 @@ export function Profile() {
         <section className="card" aria-labelledby="earn-title">
             <div className="card__head">
               <h2 id="earn-title" className="card__title">Rewards</h2>
-              <span className="pill">Off</span>
+              <span className={`pill${rewards.on ? ' pill--ranked' : ''}`}>{rewards.loading ? 'Checking…' : rewards.on ? 'On' : 'Off'}</span>
             </div>
             <dl className="kv">
-              <div><dt>Earned</dt><dd className="num">0 GGI</dd></div>
-              <div><dt>Pending</dt><dd className="num">0 GGI</dd></div>
-              <div><dt>Claimable</dt><dd className="num">0 GGI</dd></div>
-              <div><dt>Claimed</dt><dd className="num">0 GGI</dd></div>
-              <div><dt>Claim transactions</dt><dd>None yet</dd></div>
+              <div><dt>Earned</dt><dd className="num">{amount(mine?.earned)} {rewards.symbol}</dd></div>
+              <div><dt>Pending</dt><dd className="num">{amount(mine?.pending)} {rewards.symbol}</dd></div>
+              <div><dt>Claimable</dt><dd className="num">{amount(mine?.claimable)} {rewards.symbol}</dd></div>
+              <div><dt>Claimed</dt><dd className="num">{amount(mine?.claimed)} {rewards.symbol}</dd></div>
+              <div><dt>Claim transactions</dt><dd className="num">{mine?.history.filter((h) => h.status === 'confirmed').length || 'None yet'}</dd></div>
             </dl>
-            <p className="card__note">Nothing earned. Rewards are off. <Link href="/rewards" className="text-action">Why</Link></p>
+            <p className="card__note">
+              {rewards.on
+                ? <>{rewards.isTest ? 'Testnet points with no value. ' : ''}<Link href="/rewards" className="text-action">Claim on the Rewards page</Link></>
+                : <>Nothing earned. Rewards are off. <Link href="/rewards" className="text-action">Why</Link></>}
+            </p>
           </section>
       </div>
 

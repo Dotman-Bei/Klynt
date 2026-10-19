@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { games, isPlayable, statusLabel, type Game } from '@/data/games';
+import { useRewardSummary } from '@/lib/api';
 
 // The stage takes each game's own ground colour; the sheet inverts against it.
 const stage: Record<string, { bg: string; dark: boolean }> = {
@@ -16,12 +17,13 @@ const stage: Record<string, { bg: string; dark: boolean }> = {
 
 function Sheet({ game }: { game: Game }) {
   const playable = isPlayable(game);
+  const rewards = useRewardSummary();
   const rows: [string, string][] = [
     ['Type', game.type],
     ['How it scores', game.scoring],
     ['Controls', game.controls],
-    ['Leaderboard', playable ? 'Opens with score checking' : '—'],
-    ['Rewards', playable ? 'Off this season' : '—'],
+    ['Leaderboard', game.availability === 'ranked' ? 'Season 1 · open' : playable ? 'Opens with score checking' : '—'],
+    ['Rewards', playable ? rewards.forGame(game.id) : '—'],
   ];
   return (
     <div className="sheet" data-ui>

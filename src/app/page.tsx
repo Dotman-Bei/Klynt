@@ -3,6 +3,7 @@ import { WalletLink } from '@/components/WalletButton';
 import { Reveal } from '@/components/home/Reveal';
 import { Showcase } from '@/components/home/Showcase';
 import { Stages } from '@/components/home/Stages';
+import { PaidCaption } from '@/components/app/RewardText';
 import { botChain, explorerUrl, faucetUrl, service } from '@/lib/chain';
 import '@/styles/home.css';
 
@@ -95,8 +96,7 @@ export default function Home() {
               0<sup>GGI</sup>
             </p>
             <p className="paid__caption">
-              Rewards are off. They switch on when the GGI contract is verified and the reward vault is funded. Until
-              then, nothing you play is owed anything.
+              <PaidCaption />
             </p>
           </div>
           <Link href="/rewards" className="paid__source">

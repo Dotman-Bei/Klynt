@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { games, isPlayable } from '@/data/games';
 import { useWallet } from '@/components/WalletButton';
-import { live, useAuth, useBoard, type BoardRow } from '@/lib/api';
+import { live, useAuth, useBoard, useRewardSummary, type BoardRow } from '@/lib/api';
 import { botChain, shortAddress } from '@/lib/chain';
 import { bestByGame, formatScore, formatWhen, usePracticeRuns } from '@/lib/practice';
 import { Thumb } from './GameList';
@@ -27,6 +27,7 @@ export function Leaderboard() {
   const total = board.data?.total ?? 0;
   const rows: BoardRow[] = board.data?.rows ?? [];
   const season = board.data?.season;
+  const rewards = useRewardSummary();
 
   return (
     <>
@@ -116,7 +117,7 @@ export function Leaderboard() {
               <div><dt>Ranked by</dt><dd>Best accepted score</dd></div>
               <div><dt>Score checking</dt><dd>{live ? 'Live' : 'Not live'}</dd></div>
               <div><dt>Network</dt><dd>{botChain.name} ({botChain.id})</dd></div>
-              <div><dt>Rewards</dt><dd>Off · <Link href="/rewards" className="text-action">why</Link></dd></div>
+              <div><dt>Rewards</dt><dd>{rewards.loading ? 'Checking…' : rewards.on ? <>{rewards.perRun} {rewards.symbol} a qualifying run · <Link href="/rewards" className="text-action">details</Link></> : <>Off · <Link href="/rewards" className="text-action">why</Link></>}</dd></div>
             </dl>
           </section>
         </div>

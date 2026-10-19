@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { GameList } from '@/components/app/GameList';
 import { catalogueCounts } from '@/data/games';
-import { service } from '@/lib/chain';
+import { GamesNote } from '@/components/app/RewardText';
 
 export const metadata: Metadata = { title: 'Games' };
 
@@ -19,9 +19,7 @@ export default function GamesPage() {
       </div>
       <GameList />
       <p className="games-note">
-        {service.api
-          ? 'Sign in with your wallet to rank. Without it, runs are practice and stay on this device. Rewards are off this season.'
-          : 'Practice runs are kept on this device. Ranked play opens when score checking goes live; until then no game is Ranked and nothing earns rewards.'}
+        <GamesNote />
       </p>
     </>
   );
