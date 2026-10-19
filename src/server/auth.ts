@@ -1,6 +1,7 @@
 // Wallet sign-in: the player signs one plain message; the server checks the signature and sets an
 // httpOnly cookie. No transaction, no gas, and no key ever leaves the wallet (PRD 6.3).
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import type { DatabaseSync } from 'node:sqlite';
 import { isAddress, verifyMessage } from 'viem';
 
@@ -8,14 +9,26 @@ export const COOKIE = 'klynt_session';
 const NONCE_TTL_MS = 10 * 60 * 1000;
 export const SESSION_TTL_S = 7 * 24 * 60 * 60;
 
-let devSecret: string | null = null;
+const g = globalThis as { __klyntDevSecret?: string };
 function secret(): string {
   const s = process.env.KLYNT_SESSION_SECRET;
   if (s && s.length >= 32) return s;
   if (process.env.NODE_ENV === 'production') throw new Error('KLYNT_SESSION_SECRET must be set (32+ characters).');
-  // Development only: a per-process secret, so sign-ins reset when the server restarts.
-  devSecret ??= randomBytes(32).toString('hex');
-  return devSecret;
+  // Development only. Kept on globalThis because the dev server loads each route as its own
+  // module, and in a git-ignored file so sign-ins survive a restart.
+  if (!g.__klyntDevSecret) {
+    const file = '.data/dev-session-secret';
+    try {
+      g.__klyntDevSecret = readFileSync(file, 'utf8').trim();
+    } catch {
+      g.__klyntDevSecret = randomBytes(32).toString('hex');
+      try {
+        mkdirSync('.data', { recursive: true });
+        writeFileSync(file, g.__klyntDevSecret);
+      } catch {}
+    }
+  }
+  return g.__klyntDevSecret;
 }
 
 export function signInMessage(wallet: string, chainId: number, nonce: string, issuedAt: string) {
