@@ -3,6 +3,7 @@
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
+import { migrations as rewardMigrations } from './rewards.ts';
 
 const MIGRATIONS = [
   `create table if not exists seasons (
@@ -47,7 +48,7 @@ export function openDb(file: string): DatabaseSync {
   if (file !== ':memory:') mkdirSync(dirname(file), { recursive: true });
   const db = new DatabaseSync(file);
   db.exec('pragma journal_mode = wal; pragma foreign_keys = on;');
-  for (const m of MIGRATIONS) db.exec(m);
+  for (const m of [...MIGRATIONS, ...rewardMigrations]) db.exec(m);
   const season = db.prepare('select id from seasons where id = 1').get();
   if (!season) {
     db.prepare(`insert into seasons (id, name, state, starts_at, rewards) values (1, 'Season 1', 'open', ?, 'off')`).run(new Date().toISOString());
