@@ -41,7 +41,7 @@ export type Me = {
   recent: { gameId: string; score: number; status: string; reason: string | null; durationMs: number; at: number }[];
 };
 export type SubmitResult =
-  | { ok: true; status: 'accepted'; score: number; durationMs: number; rank: number; best: number }
+  | { ok: true; status: 'accepted'; score: number; durationMs: number; rank: number; best: number; earned?: string; symbol?: string | null }
   | { ok: true; status: 'rejected'; score: number; durationMs: number; code: string; reason: string };
 
 /** Who the server knows this browser as, checked against the wallet that is connected now. */
@@ -96,4 +96,22 @@ export function useBoard(gameId: string, limit = 25, offset = 0) {
 
 export function useMe(enabled: boolean) {
   return useQuery({ queryKey: ['me'], queryFn: () => api<Me>('/me'), enabled: live && enabled });
+}
+
+export type RewardsStatus = {
+  available: boolean;
+  reason: string | null;
+  season: {
+    id: number; token: `0x${string}`; symbol: string; decimals: number; budget: string; funded: string;
+    claimed: string; perWalletCap: string; claimsUntil: number; paused: boolean;
+  } | null;
+  policy: { perRun: string; dailyCap: string; minScore: Record<string, number> } | null;
+  me: {
+    earned: string; claimable: string; pending: string; claimed: string;
+    history: { nonce: string; amount: string; status: string; txHash: string | null; createdAt: number; confirmedAt: number | null; expiry: number }[];
+  } | null;
+};
+
+export function useRewards() {
+  return useQuery({ queryKey: ['rewards'], queryFn: () => api<RewardsStatus>('/rewards'), enabled: live, refetchInterval: 30_000 });
 }

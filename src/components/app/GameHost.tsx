@@ -21,7 +21,8 @@ type State =
   | { kind: 'ended'; run: PracticeRun; previousBest: number | null; outcome: Outcome }
   | { kind: 'failed' };
 
-const LOAD_TIMEOUT_MS = 15000;
+// Generous: a slow connection is not a broken game. The iframe's load event usually lands first.
+const LOAD_TIMEOUT_MS = 30000;
 
 /** The score's path: where this run stands from game to chain. */
 function PathStrip({ outcome }: { outcome: Outcome }) {
@@ -34,11 +35,17 @@ function PathStrip({ outcome }: { outcome: Outcome }) {
     : ['Not submitted', 'todo'];
   const rank: [string, 'done' | 'todo'] =
     scored?.status === 'accepted' ? [`Rank ${scored.rank} this season`, 'done'] : ['Not ranked', 'todo'];
+  const earned = scored?.status === 'accepted' && scored.earned && BigInt(scored.earned) > 0n ? scored : null;
+  const claim: [string, 'done' | 'todo'] = earned
+    ? [`Earned ${Number(BigInt(earned.earned!) / 10n ** 14n) / 10_000} ${earned.symbol}`, 'done']
+    : scored?.status === 'accepted' && scored.symbol
+      ? ['Nothing earned this run', 'todo']
+      : ['Rewards off', 'todo'];
   const steps: [string, string, string][] = [
     ['Play', 'Run finished', 'done'],
     ['Check', ...check],
     ['Rank', ...rank],
-    ['Claim', 'Rewards off', 'todo'],
+    ['Claim', ...claim],
   ];
   return (
     <ol className="path" aria-label="Where this run stands">
@@ -58,7 +65,7 @@ function resultNote(outcome: Outcome) {
       return 'Sending the run to be checked…';
     case 'scored':
       return outcome.result.status === 'accepted'
-        ? `Accepted and ranked. Your best this season is ${formatScore(outcome.result.best)}. Rewards are off, so nothing is owed.`
+        ? `Accepted and ranked. Your best this season is ${formatScore(outcome.result.best)}.${outcome.result.earned && BigInt(outcome.result.earned) > 0n ? ' Claim what you earned on the Rewards page.' : ''}`
         : `${outcome.result.reason} Rejected runs never rank.`;
     case 'error':
       return `${outcome.message} The run is saved on this device.`;
@@ -190,6 +197,7 @@ export function GameHost({ game }: { game: Game }) {
           title={`${game.name}, playable game`}
           allow="autoplay; fullscreen"
           sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+          onLoad={() => setState((s) => (s.kind === 'loading' ? { kind: 'ready' } : s))}
         />
 
         {state.kind === 'loading' && (
