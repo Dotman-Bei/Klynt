@@ -6,6 +6,6 @@ import { currentSeason } from '@/server/store';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export function GET() {
-  return json({ live: true, season: currentSeason(db()), rulesVersion: RULES_VERSION, rankedGames: Object.keys(rules) });
+export async function GET() {
+  return json({ live: true, season: await currentSeason(await db()), rulesVersion: RULES_VERSION, rankedGames: Object.keys(rules) });
 }

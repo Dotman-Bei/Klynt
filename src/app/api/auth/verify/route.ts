@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   if (limited(`verify:${clientIp(req)}`, 20, 10 * 60_000)) return fail(429, 'Too many sign-in attempts. Wait a few minutes.');
   const b = await body<{ message?: unknown; signature?: unknown }>(req);
   if (!b || typeof b.message !== 'string' || typeof b.signature !== 'string') return fail(400, 'Send the signed message and its signature.');
-  const result = await verifySignIn(db(), b.message, b.signature, botChain.id);
+  const result = await verifySignIn(await db(), b.message, b.signature, botChain.id);
   if (!result.ok) return fail(401, result.error);
   const res = json({ wallet: result.wallet });
   res.cookies.set(COOKIE, sessionToken(result.wallet), {

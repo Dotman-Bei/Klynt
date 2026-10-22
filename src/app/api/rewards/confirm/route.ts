@@ -18,15 +18,16 @@ export async function POST(req: NextRequest) {
   if (!b || typeof b.nonce !== 'string' || typeof b.txHash !== 'string' || !/^0x[0-9a-fA-F]{64}$/.test(b.txHash)) {
     return fail(400, 'Send the claim nonce and its transaction hash.');
   }
-  const row = db().prepare(`select wallet, status from claims where nonce = ?`).get(b.nonce) as { wallet: string; status: string } | undefined;
-  if (!row || row.wallet !== wallet.toLowerCase()) return fail(404, 'No such claim for this wallet.');
+  const d = await db();
+  const row = (await d.query(`select wallet, status from claims where nonce = $1`, [b.nonce])).rows[0];
+  if (!row || String(row.wallet) !== wallet.toLowerCase()) return fail(404, 'No such claim for this wallet.');
   if (row.status === 'confirmed') return json({ status: 'confirmed' });
 
-  const season = currentSeason(db());
+  const season = await currentSeason(d);
   const ctx = season ? await rewardContext(season.id) : null;
   if (!ctx?.ok) return fail(409, ctx ? ctx.reason : 'No season is open.');
   const ok = await ctx.client.claimTxMatches(b.txHash as Hex, b.nonce as Hex, wallet);
   if (!ok) return fail(409, 'That transaction is not a confirmed claim for this nonce and wallet yet.');
-  confirmClaim(db(), b.nonce, b.txHash);
+  await confirmClaim(d, b.nonce, b.txHash);
   return json({ status: 'confirmed', txHash: b.txHash });
 }

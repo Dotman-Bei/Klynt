@@ -11,13 +11,14 @@ export const dynamic = 'force-dynamic';
 const s = (v: bigint) => v.toString();
 
 export async function GET(req: NextRequest) {
-  const season = currentSeason(db());
+  const d = await db();
+  const season = await currentSeason(d);
   if (!season) return json({ available: false, reason: 'No season is open.' });
   const ctx = await rewardContext(season.id);
   const wallet = walletOf(req);
 
-  if (ctx.ok) await releaseExpired(db(), (n) => ctx.client.nonceUsed(n as `0x${string}`));
-  const mine = wallet ? balances(db(), wallet, season.id) : null;
+  if (ctx.ok) await releaseExpired(d, (n) => ctx.client.nonceUsed(n as `0x${string}`));
+  const mine = wallet ? await balances(d, wallet, season.id) : null;
 
   return json({
     available: ctx.ok && !ctx.globalPaused && !ctx.season.paused,

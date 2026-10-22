@@ -15,15 +15,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const { id } = await params;
   const b = await body<{ score?: unknown }>(req);
   if (!b) return fail(400, 'Send the score.');
-  const r = submitScore(db(), id, wallet, b.score);
+  const d = await db();
+  const r = await submitScore(d, id, wallet, b.score);
   if (!r.ok) return fail(r.status, r.error);
   if (r.status !== 'accepted') return json(r);
 
   // Earnings only when rewards are on and the vault is reachable and configured.
-  const session = db().prepare(`select game_id, season_id from sessions where id = ?`).get(id) as { game_id: string; season_id: number };
-  const ctx = await rewardContext(session.season_id);
+  const session = (await d.query(`select game_id, season_id from sessions where id = $1`, [id])).rows[0];
+  const seasonId = Number(session.season_id);
+  const ctx = await rewardContext(seasonId);
   const earned = ctx.ok
-    ? recordEarning(db(), ctx.policy, { sessionId: id, wallet, seasonId: session.season_id, gameId: session.game_id, score: r.score })
+    ? await recordEarning(d, ctx.policy, { sessionId: id, wallet, seasonId, gameId: String(session.game_id), score: r.score })
     : 0n;
   return json({ ...r, earned: earned.toString(), symbol: ctx.ok ? ctx.symbol : null });
 }

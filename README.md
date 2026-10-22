@@ -20,9 +20,18 @@ no value.
 - Rewards (when switched on): accepted runs above a game's score threshold earn, within a daily cap;
   the player claims through a funded on-chain vault with a server-signed EIP-712 authorisation.
 
+## Deploy on Vercel
+
+1. In the Vercel project: Storage → Create Database → Neon (Postgres) → connect it to this project.
+   That adds `DATABASE_URL`. Tables are created on first use.
+2. Add the environment variables from `.env.example` that you need: at least
+   `NEXT_PUBLIC_KLYNT_API=/api` and a random `KLYNT_SESSION_SECRET`; for rewards also
+   `NEXT_PUBLIC_REWARD_VAULT`, `ATTESTOR_PRIVATE_KEY` and `REWARDS_ENABLED=true`.
+3. Redeploy. Without `NEXT_PUBLIC_KLYNT_API` the site runs in Practice mode and the API answers 503.
+
 ## Run it
 
-Requires Node 22.5 or newer (the score service uses the built-in `node:sqlite`).
+Requires Node 22 or newer. No database to install: locally the score service uses PGlite (Postgres compiled to WebAssembly) in `.data/pglite`; in production it uses `DATABASE_URL` (Neon).
 
 ```bash
 npm install
@@ -101,8 +110,7 @@ Verify the source on the explorer (BOT Scan; confirm its verifier API before rel
 - **Sign-in verifies plain EOA signatures** (`viem.verifyMessage`). Smart-contract wallets
   (ERC-1271) are not supported yet.
 - **Rate limits are in memory**, per server process. A multi-instance deployment needs a shared store.
-- **Storage is SQLite** in one file. Fine for a single server; swap `src/server/db.ts` for Postgres
-  to scale out.
+- **Storage is Postgres**: Neon in production, PGlite locally and in tests, so both run the same SQL.
 - **The attestor decides who earned what.** The vault enforces budgets, caps, replay protection and
   pauses, but it trusts the attestor's signature. Keep that key in a secrets manager, separate from
   the owner key, and revoke it on the vault if it leaks.

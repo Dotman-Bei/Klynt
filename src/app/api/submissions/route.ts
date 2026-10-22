@@ -14,5 +14,5 @@ export async function POST(req: NextRequest) {
   const draft = clean(raw);
   const errors = validate(draft);
   if (Object.keys(errors).length) return json({ error: 'Some answers need a look.', fields: errors }, 422);
-  return json(createSubmission(db(), draft), 201);
+  return json(await createSubmission(await db(), draft), 201);
 }

@@ -2,7 +2,7 @@
 // httpOnly cookie. No transaction, no gas, and no key ever leaves the wallet (PRD 6.3).
 import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import type { DatabaseSync } from 'node:sqlite';
+import type { Db } from './db.ts';
 import { isAddress, verifyMessage } from 'viem';
 
 export const COOKIE = 'klynt_session';
@@ -44,26 +44,26 @@ export function signInMessage(wallet: string, chainId: number, nonce: string, is
   ].join('\n');
 }
 
-export function issueNonce(db: DatabaseSync, wallet: string, chainId: number, now = Date.now()) {
+export async function issueNonce(db: Db, wallet: string, chainId: number, now = Date.now()) {
   if (!isAddress(wallet)) return null;
   const nonce = randomBytes(12).toString('base64url');
-  db.prepare(`delete from auth_nonces where created_at < ?`).run(now - NONCE_TTL_MS);
-  db.prepare(`insert into auth_nonces (nonce, wallet, created_at) values (?, ?, ?)`).run(nonce, wallet.toLowerCase(), now);
+  await db.query(`delete from auth_nonces where created_at < $1`, [now - NONCE_TTL_MS]);
+  await db.query(`insert into auth_nonces (nonce, wallet, created_at) values ($1, $2, $3)`, [nonce, wallet.toLowerCase(), now]);
   return signInMessage(wallet, chainId, nonce, new Date(now).toISOString());
 }
 
 const field = (message: string, name: string) => message.match(new RegExp(`^${name}: (.+)$`, 'm'))?.[1]?.trim();
 
-export async function verifySignIn(db: DatabaseSync, message: string, signature: string, chainId: number, now = Date.now()) {
+export async function verifySignIn(db: Db, message: string, signature: string, chainId: number, now = Date.now()) {
   const wallet = field(message, 'Wallet');
   const nonce = field(message, 'Nonce');
   const chain = Number(field(message, 'Chain ID'));
   if (!wallet || !nonce || !isAddress(wallet)) return { ok: false as const, error: 'The sign-in message is not one Klynt issued.' };
   if (chain !== chainId) return { ok: false as const, error: 'The sign-in message is for another network.' };
 
-  const row = db.prepare(`select wallet, created_at, used from auth_nonces where nonce = ?`).get(nonce) as Record<string, unknown> | undefined;
+  const row = (await db.query(`select wallet, created_at, used from auth_nonces where nonce = $1`, [nonce])).rows[0];
   if (!row || String(row.wallet) !== wallet.toLowerCase()) return { ok: false as const, error: 'The sign-in message is not one Klynt issued.' };
-  if (Number(row.used)) return { ok: false as const, error: 'This sign-in message was already used.' };
+  if (row.used === true) return { ok: false as const, error: 'This sign-in message was already used.' };
   if (now - Number(row.created_at) > NONCE_TTL_MS) return { ok: false as const, error: 'This sign-in message expired. Try again.' };
   // Rebuild the message from stored values, so nothing else in it can be changed.
   const expected = signInMessage(wallet, chainId, nonce, field(message, 'Issued') ?? '');
@@ -77,8 +77,8 @@ export async function verifySignIn(db: DatabaseSync, message: string, signature:
   }
   if (!valid) return { ok: false as const, error: 'The signature does not match this wallet.' };
 
-  const used = db.prepare(`update auth_nonces set used = 1 where nonce = ? and used = 0`).run(nonce);
-  if (Number(used.changes) !== 1) return { ok: false as const, error: 'This sign-in message was already used.' };
+  const used = await db.query(`update auth_nonces set used = true where nonce = $1 and used = false`, [nonce]);
+  if (used.count !== 1) return { ok: false as const, error: 'This sign-in message was already used.' };
   return { ok: true as const, wallet: wallet.toLowerCase() };
 }
 
