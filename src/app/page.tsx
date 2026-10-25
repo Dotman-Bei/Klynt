@@ -26,7 +26,9 @@ const faq: [string, string][] = [
   ],
   [
     'Which network is this?',
-    'BOT Chain. Testnet first: chain ID 968, explorer scan.bohr.life. Mainnet, chain ID 677, only after the reward contract has been reviewed.',
+    botChain.testnet
+      ? 'BOT Chain testnet, chain ID 968, explorer scan.bohr.life. Mainnet, chain ID 677, comes after the reward contract has been reviewed.'
+      : 'BOT Chain mainnet, chain ID 677, explorer scan.botchain.ai. Your wallet signs in there; scores are ranked by Klynt’s server, and no rewards are paid yet.',
   ],
   [
     'Where did these games come from?',
@@ -167,8 +169,8 @@ export default function Home() {
           <div>
             <h2 className="footer__h">Chain</h2>
             <ul>
-              <li><a href={explorerUrl} rel="noopener noreferrer" target="_blank">Testnet explorer</a></li>
-              <li><a href={faucetUrl} rel="noopener noreferrer" target="_blank">Testnet faucet</a></li>
+              <li><a href={explorerUrl} rel="noopener noreferrer" target="_blank">{botChain.testnet ? 'Testnet explorer' : 'BOT Chain explorer'}</a></li>
+              {botChain.testnet && <li><a href={faucetUrl} rel="noopener noreferrer" target="_blank">Testnet faucet</a></li>}
             </ul>
           </div>
           <div>
