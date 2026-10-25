@@ -22,6 +22,20 @@ contract Deploy is Script {
         address attestor = vm.envAddress("ATTESTOR_ADDRESS");
         address token = vm.envOr("REWARD_TOKEN", address(0));
         uint256 budget = vm.envOr("SEASON_BUDGET", uint256(0));
+        bool vaultOnly = vm.envOr("VAULT_ONLY", false);
+
+        if (vaultOnly) {
+            // The vault and its signer only: no token approved, no season, nothing to pay until both are added.
+            vm.startBroadcast(key);
+            KlyntRewardVault emptyVault = new KlyntRewardVault(owner);
+            emptyVault.setSigner(attestor, true);
+            vm.stopBroadcast();
+            console2.log("KlyntRewardVault:", address(emptyVault));
+            console2.log("Owner:", owner);
+            console2.log("Attestor:", attestor);
+            console2.log("Chain id:", block.chainid);
+            return;
+        }
 
         if (token == address(0) && block.chainid == 677) revert("Refusing to deploy test points on BOT Chain mainnet");
 
