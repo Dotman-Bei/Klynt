@@ -16,6 +16,7 @@ export const botChain = defineChain({
 
 export const explorerUrl = explorer;
 export const faucetUrl = 'https://faucet.botchain.ai/';
+export const websiteUrl = 'https://botchain.ai/';
 
 export const txUrl = (hash: string) => `${explorer}/tx/${hash}`;
 export const addressUrl = (address: string) => `${explorer}/address/${address}`;

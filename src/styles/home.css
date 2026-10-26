@@ -273,6 +273,7 @@
 .footer__cols a:hover { color: var(--paper); text-decoration: underline; text-underline-offset: 3px; }
 .footer__credits { grid-column: 9 / span 4; max-width: 40em; font-size: 14px; line-height: 1.5; color: #c9d1d6; }
 .footer__last { margin-top: 56px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #c9d1d6; }
+.footer__chain { color: var(--paper); text-underline-offset: 3px; }
 .footer__btn {
   background: var(--paper); color: var(--ink); text-decoration: none; font-weight: 700; font-size: 14px;
   padding: 10px 16px; transition: transform 160ms var(--ease-out);

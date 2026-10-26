@@ -4,7 +4,7 @@ import { Reveal } from '@/components/home/Reveal';
 import { Showcase } from '@/components/home/Showcase';
 import { Stages } from '@/components/home/Stages';
 import { PaidCaption } from '@/components/app/RewardText';
-import { botChain, explorerUrl, faucetUrl, service } from '@/lib/chain';
+import { botChain, explorerUrl, faucetUrl, service, websiteUrl } from '@/lib/chain';
 import '@/styles/home.css';
 
 const faq: [string, string][] = [
@@ -167,9 +167,10 @@ export default function Home() {
             </ul>
           </div>
           <div>
-            <h2 className="footer__h">Chain</h2>
+            <h2 className="footer__h">BOT Chain</h2>
             <ul>
-              <li><a href={explorerUrl} rel="noopener noreferrer" target="_blank">{botChain.testnet ? 'Testnet explorer' : 'BOT Chain explorer'}</a></li>
+              <li><a href={websiteUrl} rel="noopener noreferrer" target="_blank">Official website</a></li>
+              <li><a href={explorerUrl} rel="noopener noreferrer" target="_blank">{botChain.testnet ? 'BOT Chain testnet explorer' : 'BOT Chain explorer'}</a></li>
               {botChain.testnet && <li><a href={faucetUrl} rel="noopener noreferrer" target="_blank">Testnet faucet</a></li>}
             </ul>
           </div>
@@ -187,7 +188,10 @@ export default function Home() {
           </p>
         </div>
         <div className="footer__last">
-          <p>© 2026 Klynt</p>
+          <p>
+            © 2026 Klynt · Built on{' '}
+            <a href={websiteUrl} rel="noopener noreferrer" target="_blank" className="footer__chain">BOT Chain</a>
+          </p>
           <Link href="/games" className="footer__btn">Choose a game</Link>
         </div>
       </footer>
