@@ -50,4 +50,4 @@ Total gas paid: 0.035306 BOT at 20 gwei.
 | 21 | claim 10 by wallet 3 | `0x6DA4…a8d8` | 97,992 | 0.001960 | [0x3428372c…](https://scan.botchain.ai/tx/0x3428372c387da031a7d10f071628ab34fc4a8481bbc42de02bb0aca07437199c) |
 | 22 | claim 11 by wallet 4 | `0xCd0e…30eb` | 93,192 | 0.001864 | [0x68050121…](https://scan.botchain.ai/tx/0x6805012193a28d639a4bc9fd2f0c0b92b44e7c27074d8a58c188bbbe2e8f7363) |
 
-Script:  (rehearsed first on a local fork of mainnet). Raw log: .
+Script: `scripts/mainnet-claim-test.mjs` (rehearsed first on a local fork of mainnet). Raw log: `mainnet-claim-test.json`.
