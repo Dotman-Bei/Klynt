@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" width="1500" height="500">
+<rect width="1500" height="500" fill="#0b0b0b"/>
+<rect x="700.0" y="80" width="144.0" height="420" fill="#f1c40f"/><path fill="#0b0b0b" d="M728.8 353.6L752.8 353.6L752.8 382.4L781.6 353.6L815.2 353.6L772 396.8L815.2 440L781.6 440L752.8 411.2L752.8 440L728.8 440Z"/>
+<rect x="852.0" y="197.60000000000002" width="144.0" height="302.4" fill="#45d6cd"/><path fill="#0b0b0b" d="M890.4 353.6L914.4 353.6L914.4 416L957.6 416L957.6 440L890.4 440Z"/>
+<rect x="1004.0" y="130.39999999999998" width="144.0" height="369.6" fill="#ff4571"/><path fill="#0b0b0b" d="M1032.8 353.6L1066.4 353.6L1076 363.2L1085.6 353.6L1119.2 353.6L1088 384.8L1088 440L1064 440L1064 384.8Z"/>
+<rect x="1156.0" y="231.2" width="144.0" height="268.8" fill="#d0cbc7"/><path fill="#0b0b0b" d="M1180 353.6L1208.8 353.6L1252 396.8L1252 353.6L1276 353.6L1276 440L1261.6 440L1204 382.4L1204 440L1180 440Z"/>
+<rect x="1308.0" y="164" width="144.0" height="336" fill="#ecf0f1"/><path fill="#0b0b0b" d="M1341.6 353.6L1418.4 353.6L1418.4 377.6L1392 377.6L1392 440L1368 440L1368 377.6L1341.6 377.6Z"/>
+<g font-family="Chivo, system-ui, sans-serif" fill="#ecf0f1">
+<text x="72" y="150" font-size="68" font-weight="900" letter-spacing="-1.5">GAMES ON</text>
+<text x="72" y="222" font-size="68" font-weight="900" letter-spacing="-1.5">BOT CHAIN</text>
+<text x="74" y="272" font-size="21" font-weight="400" fill="#c9d1d6">Play in your browser. Rank on checked leaderboards.</text>
+</g>
+</svg>
