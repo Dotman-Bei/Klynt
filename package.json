@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --no-warnings --test src/server/score.test.ts src/server/rewards.test.ts"
+    "test": "node --experimental-strip-types --no-warnings --test src/server/score.test.ts src/server/rewards.test.ts src/server/scoreboard.test.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.11",

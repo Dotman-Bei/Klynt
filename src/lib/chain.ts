@@ -27,6 +27,7 @@ export const shortAddress = (a?: string) => (a ? `${a.slice(0, 6)}…${a.slice(-
 export const service = {
   api: process.env.NEXT_PUBLIC_KLYNT_API || null,
   rewardVault: process.env.NEXT_PUBLIC_REWARD_VAULT || null,
+  scoreboard: process.env.NEXT_PUBLIC_SCOREBOARD || null,
   adminWallets: (process.env.NEXT_PUBLIC_ADMIN_WALLETS || '')
     .split(',')
     .map((s) => s.trim().toLowerCase())

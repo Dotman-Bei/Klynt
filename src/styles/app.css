@@ -286,6 +286,8 @@ body:has(.app), body:has(.play) { background: #000; color: #fff; }
 .result__score { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; color: var(--text); }
 .result .play__panel-actions { margin-top: 0; }
 .result__note { margin-top: 12px; color: var(--muted); font-size: 13px; }
+.record-run { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.record-run__note { flex: 1 1 220px; color: var(--muted); font-size: 13px; }
 .path { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 16px; }
 .path li { padding: 10px 12px; background: var(--raised); border-radius: var(--radius-panel); }
 .path li.is-done { background: var(--pill-positive-bg); }

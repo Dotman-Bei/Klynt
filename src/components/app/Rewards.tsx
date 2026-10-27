@@ -2,11 +2,12 @@
 
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { BaseError, ContractFunctionRevertedError, formatUnits, type Hex } from 'viem';
+import { formatUnits, type Hex } from 'viem';
 import { usePublicClient, useWriteContract } from 'wagmi';
 import { useWallet } from '@/components/WalletButton';
 import { api, live, useAuth, useMe, useRewards, type RewardsStatus } from '@/lib/api';
 import { addressUrl, botChain, explorerUrl, service, shortAddress, txUrl } from '@/lib/chain';
+import { explainTx } from '@/lib/txError';
 import { revertWords, vaultAbi } from '@/lib/vaultAbi';
 
 // Every value here comes from config, the score service or the vault itself. Nothing is sample data.
@@ -20,16 +21,7 @@ const fmt = (v: string | bigint | undefined, d: number) => {
 const isTestPoints = (s?: Season | null) => !!s && /^KTP-TEST$/.test(s.symbol);
 const assetName = (s?: Season | null) => (!s ? 'GGI (unverified)' : isTestPoints(s) ? `${s.symbol} (testnet points, no value)` : s.symbol);
 
-function explain(e: unknown): string {
-  if (e instanceof BaseError) {
-    const revert = e.walk((x) => x instanceof ContractFunctionRevertedError) as ContractFunctionRevertedError | null;
-    const name = revert?.data?.errorName;
-    if (name && revertWords[name]) return revertWords[name];
-    if (/User rejected|denied/i.test(e.message)) return 'You cancelled in your wallet. Nothing was sent.';
-    return e.shortMessage || e.message;
-  }
-  return e instanceof Error ? e.message : 'Something went wrong.';
-}
+const explain = (e: unknown) => explainTx(e, revertWords);
 
 type Flow =
   | { step: 'review' }

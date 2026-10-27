@@ -40,6 +40,7 @@ const MIGRATIONS = [
    )`,
   `create index if not exists sessions_board on sessions (game_id, season_id, status, score desc, submitted_at)`,
   `create index if not exists sessions_wallet on sessions (wallet, started_at)`,
+  `alter table sessions add column if not exists chain_tx text`,
   `create table if not exists submissions (
      id text primary key,
      created_at bigint not null,

@@ -64,6 +64,17 @@ Leaderboard     ->   GET /api/leaderboard?game=   best accepted score per wallet
 Games report scores through `public/games/klynt-bridge.js`, a same-origin `postMessage` bridge.
 Rules live in `src/server/rules.ts` (version 1).
 
+### On-chain score records
+
+After an accepted run, the player can tap **Record on BOT Chain**. The server signs an EIP-712 record
+(`POST /api/scores/record`) of that run: wallet, season, game, score, run ID and a one-hour expiry. The player
+sends it to `KlyntScoreboard` (`contracts/src/KlyntScoreboard.sol`) and pays the gas, about 0.002 BOT.
+The contract accepts each run once, only from the wallet that played it, keeps every wallet's best score per
+game and season, and emits `ScoreRecorded`. The server marks the run recorded only after it finds that event
+in the transaction (`POST /api/scores/record/confirm`). Nothing is paid out. Set `NEXT_PUBLIC_SCOREBOARD`
+and `ATTESTOR_PRIVATE_KEY` to switch it on; deploy with `forge script script/DeployScoreboard.s.sol`.
+End-to-end check: `scripts/record-run-test.mjs`.
+
 ## Rewards
 
 ```text

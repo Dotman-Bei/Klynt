@@ -7,11 +7,12 @@ import type { Game } from '@/data/games';
 import { api, useAuth, type SubmitResult } from '@/lib/api';
 import { addPracticeRun, bestByGame, formatDuration, formatScore, usePracticeRuns, type PracticeRun } from '@/lib/practice';
 import { IconBack } from './icons';
+import { RecordRun } from './RecordRun';
 
 type Outcome =
   | { kind: 'practice' }
   | { kind: 'submitting' }
-  | { kind: 'scored'; result: SubmitResult }
+  | { kind: 'scored'; result: SubmitResult; sessionId: string }
   | { kind: 'error'; message: string };
 
 type State =
@@ -136,7 +137,7 @@ export function GameHost({ game }: { game: Game }) {
         }
         try {
           const result = await api<SubmitResult>(`/sessions/${sessionId}/submit`, { method: 'POST', body: { score } });
-          setState({ ...base, outcome: { kind: 'scored', result } });
+          setState({ ...base, outcome: { kind: 'scored', result, sessionId } });
         } catch (err) {
           setState({ ...base, outcome: { kind: 'error', message: err instanceof Error ? err.message : 'Submitting failed.' } });
         }
@@ -264,6 +265,9 @@ export function GameHost({ game }: { game: Game }) {
             </div>
             <PathStrip outcome={state.outcome} />
             <p className="result__note">{resultNote(state.outcome)}</p>
+            {state.outcome.kind === 'scored' && state.outcome.result.status === 'accepted' && (
+              <RecordRun key={state.outcome.sessionId} sessionId={state.outcome.sessionId} />
+            )}
           </section>
         )}
       </div>
